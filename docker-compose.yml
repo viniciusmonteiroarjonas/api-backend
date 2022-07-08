@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-controle-financeiro
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_USER: controlefinanceiro
+      MYSQL_PASSWORD: controlefinanceiro
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: controlefinanceiro
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.26
+    container_name: jaeger-controle-financeiro
+    ports:
+      - 5775:5775/udp
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268
+      - 14250:14250
+      - 9411:9411
+
+  prometheus:
+    image: prom/prometheus:v2.24.1
+    container_name: prometheus-controle-financeiro
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana_controle-financeiro
+    ports:
+      - 3000:3000
